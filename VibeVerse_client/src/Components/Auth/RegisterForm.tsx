@@ -1,6 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Button from "react-bootstrap/Button";
+import Spinner from "react-bootstrap/Spinner";
 
 interface FormData {
   username: string;
@@ -13,6 +15,8 @@ interface FormData {
 
 function RegisterForm() {
   const nevigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState<FormData>({
     username: "",
     email: "",
@@ -28,6 +32,7 @@ function RegisterForm() {
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // setLoading(true);
     const { name, files } = e.target;
     if (files && files.length > 0) {
       setFormData({ ...formData, [name]: files[0] });
@@ -58,10 +63,10 @@ function RegisterForm() {
       });
       console.log("register" + response);
       console.log("register" + response.data.success);
-      if(response.data.success === true) {
+      if (response.data.success === true) {
         nevigate("/login");
       }
-
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching user: ", error);
     }
@@ -69,9 +74,9 @@ function RegisterForm() {
 
   return (
     <>
-      <div className="max-w-md w-full space-y-8 bg-white bg-opacity-20 border-1 rounded-md p-2 backdrop-filter backdrop-blur-lg select-none">
+      <div className="max-w-md w-full space-y-8 bg-black bg-opacity-70 border-1 rounded-md p-2 backdrop-filter backdrop-blur-lg select-none">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-black">
             Welcome to VibeVerse
           </h2>
         </div>
@@ -143,10 +148,7 @@ function RegisterForm() {
             </div>
 
             <div className="mb-3 w-96">
-              <label
-                htmlFor="avatar"
-                className="mb-2 inline-block text-neutral-700 dark:text-black"
-              >
+              <label htmlFor="avatar" className="mb-2 inline-block text-black">
                 Upload your Avatar
               </label>
               <input
@@ -161,7 +163,7 @@ function RegisterForm() {
             <div className="mb-3 w-96">
               <label
                 htmlFor="coverImage"
-                className="mb-2 inline-block text-neutral-700 dark:text-black"
+                className="mb-2 inline-block text-black"
               >
                 Upload your Cover Image
               </label>
@@ -175,12 +177,25 @@ function RegisterForm() {
             </div>
           </div>
           <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-1 p-2"
-            >
-              Register
-            </button>
+            {loading ? (
+              <Button variant="primary" disabled>
+                <Spinner
+                  as="span"
+                  animation="grow"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+                please wait...
+              </Button>
+            ) : (
+              <button
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-1 p-2"
+              >
+                Register
+              </button>
+            )}
           </div>
         </form>
       </div>

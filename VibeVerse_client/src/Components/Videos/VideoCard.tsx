@@ -1,49 +1,34 @@
-import React from "react";
-// import { useState } from "react";
-import { useNavigate} from "react-router-dom";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function VideoCard() {
-
+function VideoCard({ items = [], imageField = 'thumbnail', titleField = 'title', onCardClick = () => {} }) {
   const navigate = useNavigate();
 
-  const visitVideo = () => {
-    // Navigate to "/watch" route
-    navigate("/watch");
+  const handleCardClick = (item) => {
+    onCardClick(item);
+    navigate(`/watch/${item._id}`);
+    // console.log(" card clicked " + item._id);
   };
-  return (
-    <>
-      <div className="flex flex-col">
-        <button onClick={visitVideo}>
-          <div className="max-w-sm rounded-2xl overflow-hidden shadow-lg bg-gray-700 opacity-90 ">
-            <img
-              className="w-full"
-              src="/img/card-top.jpg"
-              alt="Sunset in the mountains"
-            />
-            <div className="px-6 py-4">
-              <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-              <p className="text-gray-700 text-base">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Voluptatibus quia, nulla! Maiores et perferendis eaque,
-                exercitationem praesentium nihil.
-              </p>
-            </div>
-          </div>
-        </button>
 
-        <div className="px-6 pt-4 pb-2">
-          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-            #photography
-          </span>
-          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-            #travel
-          </span>
-          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-            #winter
-          </span>
-        </div>
+  // console.log("items: " + items[1]._id);
+
+  return (
+    <div className="w-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4 ">
+        {items.map((item, index) => (
+          <div key={index} className="bg-white p-4 rounded-lg shadow-lg hover:cursor-pointer border-2 border-black border-opacity-50" onClick={() => handleCardClick(item)}>
+            <img
+              className="w-full h-32 object-cover rounded-md"
+              src={item[imageField] || "https://via.placeholder.com/320x180"}
+              alt="Thumbnail"
+            />
+            <h3 className="mt-2 text-lg font-semibold text-gray-900">
+              {item[titleField] || "Default Title"}
+            </h3>
+          </div>
+        ))}
       </div>
-    </>
+    </div>
   );
 }
 

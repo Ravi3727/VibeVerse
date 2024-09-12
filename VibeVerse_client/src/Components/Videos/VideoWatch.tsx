@@ -1,17 +1,33 @@
-import {  useRef } from "react";
+import {  useEffect, useRef, useState } from "react";
 import VideoPlayer from "./VideoPlayer";
 import videojs from "video.js";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import Comments from "./Comments";
 function VideoWatch() {
+  const { videoId } = useParams();
+  const [videoFileLink, setVideoFileLink] = useState("");
+  const [title,setTitle] = useState("");
+  const url = `http://localhost:3000/api/v1/videos/${videoId}`;
+  
+  useEffect(()=>{
+    const fetchVideoById = async () => {
+      try {
+        const response = await axios.get(url, { withCredentials: true });
+        // console.log("Response: Video by id vala : ", response.data.data.videoFile);
+        setVideoFileLink(response.data.data.videoFile);
+        console.log("videoWatch :" + response.data.data.title);
+        setTitle(response.data.data.title);
+      } catch (error) {
+        console.error(`Error fetching video By id : ${error.message}`);
+        console.error("Error fetching Video By Id: ", error);
+      }
+    };
+
+    fetchVideoById();
+  },[url]);
 
   const playerRef = useRef(null)
-  // const videoLink = "http://localhost:3000/video_uploads/content/07878c42-28de-4fa5-b5b6-3303b4d86d48/index.m3u8";
-  const videoLink = "http://localhost:3000/video_uploads/content/aa0e7fbd-4d93-442c-80c6-f9ed2e4c29df/index.m3u8";
-  // const videoLink = "http://localhost:3000/video_uploads/content/2e8e4b31-8962-4497-9ef5-dd4083db86aa/index.m3u8";
-
-  // const videoLinks = ["http://localhost:3000/video_uploads/content/07878c42-28de-4fa5-b5b6-3303b4d86d48/index.m3u8",
-  // "http://localhost:3000/video_uploads/content/aa0e7fbd-4d93-442c-80c6-f9ed2e4c29df/index.m3u8",
-  // "http://localhost:3000/video_uploads/content/2e8e4b31-8962-4497-9ef5-dd4083db86aa/index.m3u8"
-  // ]
 
   const videoJsOptions = {
     autoplay: true,
@@ -19,9 +35,9 @@ function VideoWatch() {
     responsive: true,
     fluid: true,
     sources: [{
-      src: videoLink,
+      src: videoFileLink,
       type: 'application/x-mpegURL'
-      // type: 'video/MP2T',
+      // type: 'video/mp4',
     }]
   };
 
@@ -40,8 +56,13 @@ function VideoWatch() {
 
   return (
     <>
+      <div className="flex flex-col gap-2 w-full">
       <div className="mx-auto">
-      <VideoPlayer className="rounded-xl" options={videoJsOptions} onReady={handlePlayerReady} />
+      <VideoPlayer className="rounded-xl w-full" title={title} options={videoJsOptions} onReady={handlePlayerReady} />
+      </div>
+      <div>
+        <Comments/>
+      </div>
       </div>
     </>
   );

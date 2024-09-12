@@ -1,6 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Button from "react-bootstrap/Button";
+import Spinner from "react-bootstrap/Spinner";
 
 interface FormData {
   username: string;
@@ -12,11 +14,13 @@ const url = "http://localhost:3000/api/v1/users/login";
 
 function LoginForm() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     username: "",
     email: "",
     password: "",
   });
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -24,28 +28,58 @@ function LoginForm() {
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     e.preventDefault();
     try {
-      const response = await axios.post(url, formData,{ withCredentials: true });
-      console.log("Response:", response.data);
-      // localStorage.setItem('accessToken', response.data.data.accessToken);
-      // localStorage.setItem('refreshToken', response.data.data.refreshToken);
-      if(response.data.success === true){
-        navigate("/profile");
+      const response = await axios.post(url, formData, {
+        withCredentials: true,
+      });
+
+      if (response.data.success === true) {
+        const userId = response.data.data.user._id;
+        localStorage.setItem("userId", userId);
+
+        navigate(`/profile/${userId}`);
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(error.response.data, "text/html");
+        const preElement = doc.querySelector("pre");
+
+        if (preElement) {
+          const preText = preElement.textContent || "";
+          const match = preText.match(
+            /Error: (Invalid password|User does not exist)/
+          );
+          if (match) {
+            setErrorMessage(match[1]);
+          } else {
+            setErrorMessage("An unknown error occurred.");
+          }
+        } else {
+          setErrorMessage("An unknown error occurred.");
+        }
+      } else {
+        setErrorMessage("An unknown error occurred.");
+      }
+      setLoading(false);
     }
   };
 
   return (
     <>
-      <div className="max-w-md w-full space-y-8 bg-white bg-opacity-20 border-1 rounded-md p-2 backdrop-filter backdrop-blur-lg select-none">
+      <div className="max-w-md w-full space-y-8 bg-black bg-opacity-70 border-1 rounded-md p-2 backdrop-filter backdrop-blur-lg select-none">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-black">
             Welcome to VibeVerse
           </h2>
         </div>
+        {errorMessage && (
+          <div className="text-red-500 text-center">{errorMessage}</div>
+        )}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px flex flex-col gap-2 p-2">
             <div>
@@ -98,12 +132,25 @@ function LoginForm() {
             </div>
           </div>
           <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-1 p-2"
-            >
-              Login
-            </button>
+            {loading ? (
+              <Button variant="primary" disabled>
+                <Spinner
+                  as="span"
+                  animation="grow"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+                please wait...
+              </Button>
+            ) : (
+              <button
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-1 p-2"
+              >
+                Login
+              </button>
+            )}
           </div>
         </form>
       </div>

@@ -6,13 +6,13 @@ function SearchBar() {
       <div>
         <div className="flex flex-col p-2">
           <div
-            className="bg-white items-center justify-between w-9/12 h-12 flex rounded-full shadow-lg p-2 mb-5 sticky"
+            className="bg-white items-center border-2 border-opacity-60 border-black justify-between w-9/12 h-12 flex rounded-full shadow-lg p-2 mb-5 sticky"
             style={{ top: "5px" }}
           >
             <div>
               <div className="p-2 mr-1 rounded-full hover:bg-gray-100 cursor-pointer">
                 <svg
-                  className="h-6 w-6 text-gray-500"
+                  className="h-6 w-6 text-black opacity-90"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -27,11 +27,11 @@ function SearchBar() {
             </div>
 
             <input
-              className="font-bold uppercase rounded-full w-full py-4 pl-4 text-gray-700 bg-gray-100 leading-tight focus:outline-none focus:shadow-outline lg:text-sm text-xs h-8"
+              className="font-bold uppercase rounded-full w-full py-4 pl-4 text-gray-900 bg-gray-100 leading-tight focus:outline-none focus:shadow-outline lg:text-sm text-xs h-8"
               type="text"
               placeholder="Search"
             />
-            <div className="bg-black opacity-70 p-2 hover:bg-black-600 hover:opacity-50 cursor-pointer mx-2 rounded-full">
+            <div className="bg-black opacity-90 p-2 hover:bg-black-600 hover:opacity-50 cursor-pointer mx-2 rounded-full">
               <svg
                 className="w-6 h-6 text-white"
                 xmlns="http://www.w3.org/2000/svg"

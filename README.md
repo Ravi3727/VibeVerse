@@ -45,7 +45,7 @@ Authentication & Authorization: Secure login and signup using JWT-based authenti
     REFRESH_TOKEN_EXPIRE =  
     CLOUDINARY_CLOUD_NAME =  
     CLOUDINARY_API_KEY =  
-    ALOUDINARY_API_SECRET =    
+    CLOUDINARY_API_SECRET =    
 5. Run the application:
    For frontend:  
    ```cd FrontEnd```  
